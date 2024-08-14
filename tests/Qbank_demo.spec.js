@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test');
-const testdata = require('../TestData/json_testData1.json');
+const testdata = require('../TestData/json_testData.json');
 
 test.describe('QBANK', async () => {
 
