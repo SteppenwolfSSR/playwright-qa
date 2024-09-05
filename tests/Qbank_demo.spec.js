@@ -9,7 +9,7 @@ test.describe('QBANK', async () => {
         expect(page.locator("//div[contains(text(),'Welcome back!')]"), 'Verify Qbank Welcome text')
             .toBeVisible();
 
-        //Login to Qbank
+        //Login to Qbank Website
         await page.getByPlaceholder('Username').fill(testdata.username);
         await page.getByPlaceholder('Password').fill(testdata.password);
         await page.getByRole('button', { name: 'Sign In' }).click();
