@@ -69,8 +69,10 @@ test.describe('QBANK', async () => {
         }
 
         // logout of QBank application
-        await page.getByText('Log out').click()
+        await page.getByText('Log out').click();
+        await page.close();
     });
+
 })
 
 // Function to convert Amount String to Amount
