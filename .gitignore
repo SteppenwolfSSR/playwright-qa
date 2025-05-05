@@ -8,3 +8,4 @@ TestData/json_testData.json
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+fixtures/testData.csv
