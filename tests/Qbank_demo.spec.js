@@ -1,17 +1,17 @@
-const { test, expect } = require('@playwright/test');
-const testdata = require('../fixtures/json_testData.json');
+import { test, expect } from '@playwright/test';
+import { url, username, password } from '../fixtures/json_testData.json';
 
 test.describe('QBANK', async () => {
 
     test('Qbank_Transaction_Validation', async ({ page }, testInfo) => {
         // Launch Qbank URL
-        await page.goto(testdata.url);
+        await page.goto(url);
         expect(page.locator("//div[contains(text(),'Welcome back!')]"), 'Verify Qbank Welcome text')
             .toBeVisible();
 
         //Login to Qbank Website
-        await page.getByPlaceholder('Username').fill(testdata.username);
-        await page.getByPlaceholder('Password').fill(testdata.password);
+        await page.getByPlaceholder('Username').fill(username);
+        await page.getByPlaceholder('Password').fill(password);
         await page.getByRole('button', { name: 'Sign In' }).click();
 
         //Sync
@@ -30,7 +30,7 @@ test.describe('QBANK', async () => {
         await page.getByRole('combobox', { name: 'Transfer from' }).selectOption('Salary Account');
         await page.getByRole('combobox', { name: 'Transfer to' }).selectOption('Electricity Bill');
         await page.getByLabel('Amount ($)').fill('1');
-        await page.getByLabel('Memo').fill('Elecricity Bill');
+        await page.getByLabel('Memo').fill('Electricity Bill');
         await page.getByRole('button', { name: 'Submit' }).click();
 
         //sync
@@ -39,7 +39,7 @@ test.describe('QBANK', async () => {
         //Get Transaction details like Transaction ID
         let transactionDetails = await page.locator("//span[contains(@class,'transaction-amoun')]").getAttribute('data-transaction');
         let transactionID = transactionDetails.split('-')[1];
-        console.log('Transacation ID => ' + transactionID);
+        console.log('Transaction ID => ' + transactionID);
 
         //Navigate to Account summary and get the Salary account Balance after Transaction
         await page.getByRole('button', { name: 'Go to Account Summary' }).click();
@@ -54,18 +54,20 @@ test.describe('QBANK', async () => {
         //Navigate to Account activity and verify transaction by verifying Transaction ID
         await page.getByText('Account Activity').click();
         await page.locator("//td[@id='qba-transaction-content']").nth(0).waitFor();
-        let trnsactions = page.locator("//td[@id='qba-transaction-content']");
-        let count = await trnsactions.count();
+        let transactions = page.locator("//td[@id='qba-transaction-content']");
+        let count = await transactions.count();
         let debitedAmount = BeforeBalance - AfetrBalance;
+        let transactionFound = false;
         for (let i = 0; i < count; i++) {
-            let trnsaction = await trnsactions.nth(i).textContent();
-            if (trnsaction.trim() == transactionID) {
+            let transaction = await transactions.nth(i).textContent();
+            if (transaction.trim() == transactionID) {
                 console.log('Transaction Successfull of Amount $' + debitedAmount);
+                transactionFound = true;
                 break;
             }
-            else if (i >= count) {
-                console.log('Transaction Failed');
-            }
+        }
+        if (!transactionFound) {
+            console.log('Transaction Failed');
         }
 
         // logout of QBank application
